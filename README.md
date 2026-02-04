@@ -3,6 +3,7 @@
 [Getting started](#getting-started) |
 [Staying up to date with Horizon changes](#staying-up-to-date-with-horizon-changes) |
 [Developer tools](#developer-tools) |
+[Decorators](#decorators) |
 [Contributing](#contributing) |
 [License](#license)
 
@@ -82,6 +83,189 @@ You can follow the [theme check documentation](https://shopify.dev/docs/storefro
 #### Shopify/theme-check-action
 
 Horizon runs [Theme Check](#Theme-Check) on every commit via [Shopify/theme-check-action](https://github.com/Shopify/theme-check-action).
+
+## Decorators
+
+This section provides a guide to using TypeScript decorators in RetaniHorizonTS for enhancing HTMLElements in Web Components and interacting with Shopify APIs such as Section Rendering and Ajax API. Decorators offer a declarative way to add functionality to components and API interactions.
+
+### Prerequisites
+
+- Node.js (version 16 or higher)
+- Basic knowledge of TypeScript, decorators, and Web Components
+- Vite for building
+
+### Setup with Vite
+
+1. Ensure Vite is installed in your project:
+
+   ```sh
+   npm install vite --save-dev
+   ```
+
+2. Configure `vite.config.ts` for TypeScript and Web Components:
+
+   ```typescript
+   import { defineConfig } from 'vite';
+
+   export default defineConfig({
+     build: {
+       lib: {
+         entry: 'src/index.ts',
+         name: 'RetaniDecorators',
+         fileName: 'retani-decorators',
+       },
+       rollupOptions: {
+         external: ['@shopify/theme-scripts'],
+         output: {
+           globals: {
+             '@shopify/theme-scripts': 'ShopifyThemeScripts',
+           },
+         },
+       },
+     },
+   });
+   ```
+
+3. Enable decorators in `tsconfig.json`:
+
+   ```json
+   {
+     "compilerOptions": {
+       "experimentalDecorators": true,
+       "emitDecoratorMetadata": true
+     }
+   }
+   ```
+
+### Decorators for HTMLElement in Web Components
+
+Decorators can define custom elements and add behaviors to HTMLElements.
+
+#### Custom Element Decorator
+
+```typescript
+// src/decorators/customElement.ts
+export function customElement(tagName: string) {
+  return function (constructor: any) {
+    customElements.define(tagName, constructor);
+  };
+}
+```
+
+Usage:
+
+```typescript
+// src/components/MyComponent.ts
+import { customElement } from '../decorators/customElement';
+
+@customElement('my-component')
+export class MyComponent extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = '<p>Hello from Web Component!</p>';
+  }
+}
+```
+
+### Decorators for Shopify APIs
+
+Decorators can handle interactions with Shopify APIs like Section Rendering and Ajax API.
+
+#### Section Rendering Decorator
+
+```typescript
+// src/decorators/sectionRender.ts
+export function sectionRender(sectionId: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = async function (...args: any[]) {
+      try {
+        const response = await fetch(`/?section_id=${sectionId}`);
+        const html = await response.text();
+        return originalMethod.call(this, html);
+      } catch (error) {
+        console.error('Section rendering failed:', error);
+      }
+    };
+  };
+}
+```
+
+Usage:
+
+```typescript
+// src/components/HeaderSection.ts
+import { sectionRender } from '../decorators/sectionRender';
+import { customElement } from '../decorators/customElement';
+
+@customElement('header-section')
+export class HeaderSection extends HTMLElement {
+  @sectionRender('header')
+  async renderSection(html: string) {
+    this.innerHTML = html;
+  }
+
+  connectedCallback() {
+    this.renderSection();
+  }
+}
+```
+
+#### Ajax API Decorator
+
+```typescript
+// src/decorators/ajaxApi.ts
+export function ajaxApi(url: string, method: 'GET' | 'POST' = 'GET') {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = async function (...args: any[]) {
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: method === 'POST' ? JSON.stringify(args[0]) : undefined,
+        });
+        const data = await response.json();
+        return originalMethod.call(this, data);
+      } catch (error) {
+        console.error('Ajax API request failed:', error);
+      }
+    };
+  };
+}
+```
+
+Usage for Cart API:
+
+```typescript
+// src/components/CartButton.ts
+import { ajaxApi } from '../decorators/ajaxApi';
+import { customElement } from '../decorators/customElement';
+
+@customElement('cart-button')
+export class CartButton extends HTMLElement {
+  @ajaxApi('/cart/add.js', 'POST')
+  async addToCart(data: any) {
+    console.log('Item added:', data);
+  }
+
+  connectedCallback() {
+    this.innerHTML = '<button>Add to Cart</button>';
+    this.querySelector('button')?.addEventListener('click', () => this.addToCart({ id: 123, quantity: 1 }));
+  }
+}
+```
+
+### Building and Integration
+
+1. Build the decorators:
+
+   ```sh
+   npm run build
+   ```
+
+2. Include the output in your theme's assets and load in Liquid templates.
+
+Test in a Shopify development store to ensure compatibility.
 
 ## Contributing
 

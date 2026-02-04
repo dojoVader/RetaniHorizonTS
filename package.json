@@ -1,0 +1,26 @@
+{
+  "name": "retani-horizon-ts",
+  "version": "1.0.0",
+  "description": "A TypeScript-enhanced Shopify theme based on Horizon with decorators for Web Components and Shopify APIs",
+  "main": "dist/retani-decorators.js",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.4.21"
+  },
+  "keywords": [
+    "shopify",
+    "theme",
+    "typescript",
+    "decorators",
+    "web-components"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
