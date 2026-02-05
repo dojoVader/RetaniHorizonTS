@@ -110,7 +110,7 @@ This section provides a guide to using TypeScript decorators in RetaniHorizonTS 
    export default defineConfig({
      build: {
        lib: {
-         entry: 'src/index.ts',
+         entry: 'src/sample-component.ts',
          name: 'RetaniDecorators',
          fileName: 'retani-decorators',
        },

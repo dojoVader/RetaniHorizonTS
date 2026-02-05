@@ -780,6 +780,6 @@ function apply() {
   injectStyles(document);
 }
 
-// src/index.ts
+// src/sample-component.ts
 if (!isSupported()) apply();
 //# sourceMappingURL=popover.js.map

@@ -3,11 +3,12 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   build: {
-    outDir: 'ts-assets',
+    outDir: 'assets/retani-kit',
+    emptyOutDir: true,
     lib: {
-        entry: 'retani-kit/index.ts',
-      fileName: 'retani-kit',
-      formats: ['es', 'cjs'],
+        entry: 'retani-kit/sample-component.ts',
+      fileName: (_, fileName) => `${fileName}.js`,
+      formats: ['es']
     }
   },
   plugins: [
