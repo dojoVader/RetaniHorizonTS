@@ -1,11 +1,20 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "target": "es2022",
+    "allowJs": true,
     "useDefineForClassFields": true,
     "module": "esnext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-
+    "paths": {
+      "@/assets/*": ["./assets/*"],
+      "@/kit/*": ["./retani-kit/*"],
+    },
+    "types": [
+      "./assets/global.d.ts",
+    ],
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -20,5 +29,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["retani-kit"]
+  "include": ["retani-kit"],
+
 }

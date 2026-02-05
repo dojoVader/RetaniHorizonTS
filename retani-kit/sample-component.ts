@@ -1,4 +1,10 @@
-export class Sample extends HTMLElement {
+import {customElement} from "./decorators/custom-element.ts";
+import {Component} from "./core/component";
+
+
+
+@customElement('sample-component')
+export class Sample extends Component {
     constructor() {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
@@ -8,4 +14,4 @@ export class Sample extends HTMLElement {
     }
 }
 
-customElements.define('sample-component', Sample);
+

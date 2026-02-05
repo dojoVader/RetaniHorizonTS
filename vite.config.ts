@@ -10,8 +10,10 @@ export default defineConfig({
       fileName: (_, fileName) => `${fileName}.js`,
       formats: ['es']
     }
+
   },
   plugins: [
       tailwindcss()
-  ]
+  ],
+
 })
