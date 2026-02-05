@@ -255,6 +255,321 @@ export class CartButton extends HTMLElement {
 }
 ```
 
+#### Cart API Decorator
+
+The Cart API decorator provides utilities and decorators for interacting with Shopify's Cart API, including adding items, updating quantities, and retrieving cart data.
+
+```typescript
+// src/decorators/cart-api.ts
+import { fetchConfig } from '../core/utilities';
+
+/**
+ * Interface for cart item
+ */
+export interface CartItem {
+  id: number;
+  quantity: number;
+  variant_id?: number;
+  properties?: Record<string, any>;
+  [key: string]: any;
+}
+
+/**
+ * Interface for cart response
+ */
+export interface CartResponse {
+  items: CartItem[];
+  total_price: number;
+  item_count: number;
+  [key: string]: any;
+}
+
+/**
+ * Shopify Cart API utilities
+ */
+export class CartAPI {
+  /**
+   * Get the current cart
+   */
+  static async getCart(): Promise<CartResponse> {
+    const response = await fetch('/cart.js', fetchConfig('json'));
+    if (!response.ok) {
+      throw new Error('Failed to get cart');
+    }
+    return response.json();
+  }
+
+  /**
+   * Add item to cart
+   */
+  static async addToCart(item: CartItem): Promise<CartResponse> {
+    const response = await fetch('/cart/add.js', fetchConfig('json', { body: JSON.stringify(item) }));
+    if (!response.ok) {
+      throw new Error('Failed to add item to cart');
+    }
+    return response.json();
+  }
+
+  // ... other methods
+}
+
+/**
+ * Decorator for adding to cart
+ */
+export function AddToCart(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return CartOperation('addToCart')(target, propertyKey, descriptor);
+}
+
+// ... other decorators
+```
+
+Usage:
+
+```typescript
+// src/components/ProductCard.ts
+import { AddToCart, CartItem } from '../decorators/cart-api';
+import { customElement } from '../decorators/customElement';
+
+@customElement('product-card')
+export class ProductCard extends HTMLElement {
+  @AddToCart
+  async handleAddToCart(cartResponse: any, item: CartItem) {
+    console.log('Item added to cart:', cartResponse);
+    // Update UI or handle success
+  }
+
+  connectedCallback() {
+    this.innerHTML = '<button>Add to Cart</button>';
+    this.querySelector('button')?.addEventListener('click', () => {
+      this.handleAddToCart({ id: 123, quantity: 1 });
+    });
+  }
+}
+```
+
+#### Product API Decorator
+
+The Product API decorator provides utilities and decorators for interacting with Shopify's Product API, including fetching individual products, searching products, and getting recommendations.
+
+```typescript
+// src/decorators/product-api.ts
+import { fetchConfig } from '../core/utilities';
+
+/**
+ * Interface for product
+ */
+export interface Product {
+  id: number;
+  title: string;
+  handle: string;
+  description: string;
+  variants: ProductVariant[];
+  images: ProductImage[];
+  price: number;
+  compare_at_price?: number;
+  available: boolean;
+  [key: string]: any;
+}
+
+/**
+ * Interface for product variant
+ */
+export interface ProductVariant {
+  id: number;
+  title: string;
+  price: number;
+  compare_at_price?: number;
+  available: boolean;
+  [key: string]: any;
+}
+
+/**
+ * Interface for product image
+ */
+export interface ProductImage {
+  id: number;
+  src: string;
+  alt?: string;
+  [key: string]: any;
+}
+
+/**
+ * Interface for product response
+ */
+export interface ProductResponse {
+  product: Product;
+  [key: string]: any;
+}
+
+/**
+ * Shopify Product API utilities
+ */
+export class ProductAPI {
+  /**
+   * Get a product by handle
+   */
+  static async getProduct(handle: string): Promise<ProductResponse> {
+    const response = await fetch(`/products/${handle}.js`, fetchConfig('json'));
+    if (!response.ok) {
+      throw new Error('Failed to get product');
+    }
+    return response.json();
+  }
+
+  // ... other methods
+}
+
+/**
+ * Decorator for getting a product
+ */
+export function GetProduct(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return ProductOperation('getProduct')(target, propertyKey, descriptor);
+}
+
+// ... other decorators
+```
+
+Usage:
+
+```typescript
+// src/components/ProductDetails.ts
+import { GetProduct, ProductResponse } from '../decorators/product-api';
+import { customElement } from '../decorators/customElement';
+
+@customElement('product-details')
+export class ProductDetails extends HTMLElement {
+  @GetProduct
+  async loadProduct(product: ProductResponse, handle: string) {
+    console.log('Product loaded:', product);
+    this.renderProduct(product);
+  }
+
+  private renderProduct(product: ProductResponse) {
+    this.innerHTML = `
+      <h1>${product.title}</h1>
+      <p>${product.description}</p>
+      <p>Price: $${product.price}</p>
+    `;
+  }
+
+  connectedCallback() {
+    const handle = this.getAttribute('handle') || 'default-product';
+    this.loadProduct(handle);
+  }
+}
+```
+
+#### Predictive Search API Decorator
+
+The Predictive Search API decorator provides utilities and decorators for interacting with Shopify's Predictive Search API, enabling search suggestions for products, collections, pages, and articles.
+
+```typescript
+// src/decorators/predictive-search-api.ts
+import { fetchConfig } from '../core/utilities';
+
+/**
+ * Interface for search result
+ */
+export interface SearchResult {
+  id: number;
+  title: string;
+  handle: string;
+  url: string;
+  price?: number;
+  compare_at_price?: number;
+  available: boolean;
+  image?: string;
+  [key: string]: any;
+}
+
+/**
+ * Interface for predictive search response
+ */
+export interface PredictiveSearchResponse {
+  resources: {
+    results: {
+      products?: SearchResult[];
+      collections?: SearchResult[];
+      pages?: SearchResult[];
+      articles?: SearchResult[];
+    };
+    query: string;
+  };
+  [key: string]: any;
+}
+
+/**
+ * Shopify Predictive Search API utilities
+ */
+export class PredictiveSearchAPI {
+  /**
+   * Perform predictive search
+   */
+  static async search(query: string, options: {
+    resources?: {
+      type: 'product' | 'collection' | 'page' | 'article';
+      limit?: number;
+    }[];
+    unavailable_products?: 'show' | 'hide' | 'last';
+  } = {}): Promise<PredictiveSearchResponse> {
+    // ... implementation
+  }
+
+  // ... other methods
+}
+
+/**
+ * Decorator for searching products
+ */
+export function SearchProducts(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return SearchOperation('searchProducts')(target, propertyKey, descriptor);
+}
+
+// ... other decorators
+```
+
+Usage:
+
+```typescript
+// src/components/SearchInput.ts
+import { SearchProducts, SearchResult } from '../decorators/predictive-search-api';
+import { customElement } from '../decorators/customElement';
+
+@customElement('search-input')
+export class SearchInput extends HTMLElement {
+  @SearchProducts
+  async handleSearch(results: SearchResult[], query: string) {
+    console.log('Search results:', results);
+    this.renderResults(results);
+  }
+
+  private renderResults(results: SearchResult[]) {
+    const resultsHtml = results.map(result => `
+      <div class="search-result">
+        <img src="${result.image}" alt="${result.title}" />
+        <h3>${result.title}</h3>
+        <p>$${result.price}</p>
+      </div>
+    `).join('');
+    this.querySelector('.results')!.innerHTML = resultsHtml;
+  }
+
+  connectedCallback() {
+    this.innerHTML = `
+      <input type="text" placeholder="Search products..." />
+      <div class="results"></div>
+    `;
+    const input = this.querySelector('input')!;
+    input.addEventListener('input', (e) => {
+      const query = (e.target as HTMLInputElement).value;
+      if (query.length > 2) {
+        this.handleSearch(query);
+      }
+    });
+  }
+}
+```
+
 ### Building and Integration
 
 1. Build the decorators:
