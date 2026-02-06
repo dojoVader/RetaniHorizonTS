@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});class t extends HTMLElement{constructor(){super();const n=this.attachShadow({mode:"open"}),e=document.createElement("div");e.textContent="This is a sample web component!",n.appendChild(e)}}customElements.define("sample-component",t);exports.Sample=t;
