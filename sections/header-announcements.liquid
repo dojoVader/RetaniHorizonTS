@@ -10,7 +10,7 @@
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <aside
   class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
-  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px;"
+  style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px; background-color: {{ section.settings.announcement_background }};"
 >
   {% liquid
     assign autoplay = false
@@ -165,10 +165,10 @@
       "default": "page-width"
     },
     {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "default": "scheme-4",
-      "label": "t:settings.color_scheme"
+      "type": "color_background",
+      "id": "announcement_background",
+      "label": "Background",
+      "default": "#222222"
     },
     {
       "type": "range",

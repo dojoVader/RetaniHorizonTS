@@ -24,7 +24,7 @@
     {{ block.shopify_attributes }}
     aria-hidden="{% if block_index == 0 %}false{% else %}true{% endif %}"
   >
-    <p class="announcement-bar__text">
+    <p class="announcement-bar__text" style="color: {{ block.settings.body_text }}">
       {{ block.settings.text }}
     </p>
 
@@ -155,6 +155,12 @@
         }
       ],
       "default": "var(--font-body--family)"
+    },
+    {
+      "type": "color",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "#000000"
     },
     {
       "type": "select",
