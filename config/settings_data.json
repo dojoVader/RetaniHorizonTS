@@ -9,6 +9,7 @@
  */
  {
   "current": {
+    "announcement_background_color": "#222222",
     "logo_height": 36,
     "logo_height_mobile": 28,
     "type_body_font": "inter_n4",
