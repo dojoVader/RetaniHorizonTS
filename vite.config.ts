@@ -24,6 +24,7 @@ export default defineConfig({
     }
   },
   build: {
+    minify: false,
     outDir: 'assets/retani-kit/',
     emptyOutDir: false,
     lib: {
