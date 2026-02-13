@@ -133,22 +133,46 @@ to add functionality to components and API interactions.
 2. Configure `vite.config.ts` for TypeScript and Web Components:
 
    ```typescript
-   export default defineConfig({
-    build: {
-         outDir: 'assets/retani-kit',
-         emptyOutDir: true,
-         lib: {
-            entry: 'retani-kit/sample-component.ts',
-            fileName: (_, fileName) => `${fileName}.js`,
-            formats: ['es']
-           }
-
+    import { defineConfig } from 'vite';
+    import tailwindcss from '@tailwindcss/vite';
+    import { globSync } from 'glob';
+    import path from 'path';
+    
+    // Find all the TS Components
+    const entries: Record<string, string> = {};
+    const files = globSync('retani-kit/ts-components/**/*.ts');
+    
+    for (const file of files) {
+      const name = file
+        .replace('retani-kit/ts-components/', '')
+        .replace('.ts', '')
+        .replace('/', '-');
+      entries[name] = path.resolve(file);
+    }
+    
+    export default defineConfig({
+      resolve: {
+        alias: {
+          '@theme/*': './assets/*',
+          '@/decorators/*': './retani-kit/decorators/*',
         },
-        plugins: [
-            tailwindcss()
-                 ],
+      },
+      build: {
+        minify: false,
+        outDir: 'assets/retani-kit/',
+        emptyOutDir: false,
+        lib: {
+          entry: entries,
+          fileName: (_, fileName) => `${fileName}.js`,
+          formats: ['es'],
+        },
+        rollupOptions: {
+          external: ['@theme/utilities', '@theme/component'],
+        },
+      },
+      plugins: [tailwindcss()],
+    });
 
-         })
 
    ```
 
