@@ -1,4 +1,4 @@
-import { fetchConfig } from '../core/utilities';
+import { fetchConfig } from '@theme/utilities';
 
 /**
  * Interface for product

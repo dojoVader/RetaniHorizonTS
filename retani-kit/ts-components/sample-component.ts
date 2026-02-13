@@ -1,5 +1,6 @@
-import {customElement} from "./decorators/custom-element.ts";
+
 import {Component} from "@theme/component";
+import {customElement} from "../decorators/custom-element";
 
 
 
@@ -9,9 +10,13 @@ export class Sample extends Component {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
         const wrapper = document.createElement('div');
-        wrapper.textContent = 'This is a sample web component!';
+        wrapper.addEventListener('click',() => {
+            console.log('You clicked the sample component!');
+        })
+        wrapper.textContent = 'Web Component generated in TS !';
         console.log("This is Firing....")
         shadow.appendChild(wrapper);
+
     }
 }
 

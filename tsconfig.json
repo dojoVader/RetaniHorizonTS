@@ -11,6 +11,7 @@
     "paths": {
       "@theme/*": ["./assets/*"],
       "@/kit/*": ["./retani-kit/*"],
+      "@/decorators/*": ["./retani-kit/decorators/*"],
     },
     "types": [
       "./assets/global.d.ts",

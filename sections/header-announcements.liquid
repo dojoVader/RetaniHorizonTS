@@ -5,7 +5,14 @@
     fetchpriority="low"
   ></script>
 
+
 {% endif %}
+
+<script
+        src="{{ 'retani-kit/sample-component.js' | asset_url }}"
+        type="module"
+        fetchpriority="low"
+></script>
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <aside
@@ -36,6 +43,7 @@
       {% content_for 'blocks' %}
     </div>
   </announcement-bar-component>
+  <sample-component></sample-component>
 </aside>
 
 {% stylesheet %}
